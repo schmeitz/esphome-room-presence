@@ -117,12 +117,24 @@ packages, generates the secrets and asks in which room the node goes.
 
 **Changing the room later**
 
-- Easiest: open the node's device page in Home Assistant, click the **pencil icon** and
-  change the **area**. Bermuda uses the new area right away.
-- With option B you can also change `room:` (and `friendly_name:`) in the node's YAML file
-  and install again, so the file stays the source of truth.
-- The hostname (`name:`) can be changed with **Rename** in the Device Builder's menu for
-  that node. This is optional; the hostname is only a technical name.
+- Change the **area** in Home Assistant. The area is what counts for Bermuda. Change it
+  on **two** devices, because Home Assistant shows the node twice:
+  1. the ESPHome device (*Settings → Devices & services → ESPHome*, open the node, pencil
+     icon, area);
+  2. the Bluetooth scanner device, named like the node with its Bluetooth MAC address
+     behind it (*Settings → Devices & services → Bluetooth*). Bermuda reads the area of
+     this device.
+
+  Then reload Bermuda (*Settings → Devices & services → Bermuda*, ⋮, **Reload**).
+- With option B, also change `room:` (and `friendly_name:`) in the node's YAML file and
+  install again, so the file stays the source of truth. This alone does **not** move an
+  existing device in Home Assistant: ESPHome only sets the area when the node is added.
+- Leave the hostname (`name:`) alone. It is only a technical name. If you do want to
+  change it, use **Rename** in the Device Builder's menu for that node. If you edit `name:`
+  in the YAML and press Install, the upload fails with *device is offline*: the Device
+  Builder looks for the new name, but the node still has the old one. Fix: install once
+  more and choose the node's IP address as the target (or use `esphome run <file>
+  --device <ip-address>`).
 
 ## 5. The node's web page
 

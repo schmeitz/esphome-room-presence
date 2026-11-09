@@ -119,12 +119,26 @@ packages, maakt de secrets aan en vraagt in welke ruimte de module komt.
 
 **De ruimte later wijzigen**
 
-- Het makkelijkst: open de apparaatpagina van de module in Home Assistant, klik op het
-  **potloodicoon** en wijzig het **gebied**. Bermuda gebruikt het nieuwe gebied meteen.
-- Bij optie B kun je ook `room:` (en `friendly_name:`) in het YAML-bestand van de module
-  aanpassen en opnieuw installeren, zodat het bestand leidend blijft.
-- De hostname (`name:`) wijzig je via **Rename** in het menu van de module in de Device
-  Builder. Dat is optioneel; de hostname is alleen een technische naam.
+- Wijzig het **gebied** in Home Assistant. Het gebied is wat telt voor Bermuda. Wijzig het
+  bij **twee** apparaten, want Home Assistant toont de module twee keer:
+  1. het ESPHome-apparaat (*Instellingen → Apparaten & diensten → ESPHome*, module openen,
+     potloodicoon, gebied);
+  2. het Bluetooth-scannerapparaat, met de naam van de module en het Bluetooth-MAC-adres
+     erachter (*Instellingen → Apparaten & diensten → Bluetooth*). Bermuda leest het gebied
+     van dit apparaat.
+
+  Herlaad daarna Bermuda (*Instellingen → Apparaten & diensten → Bermuda*, ⋮,
+  **Herladen**).
+- Bij optie B pas je ook `room:` (en `friendly_name:`) aan in het YAML-bestand van de module
+  en installeer je opnieuw, zodat het bestand leidend blijft. Dat alleen verplaatst een
+  bestaand apparaat in Home Assistant **niet**: ESPHome zet het gebied alleen bij het
+  toevoegen.
+- Laat de hostname (`name:`) met rust. Dat is alleen een technische naam. Wil je hem toch
+  wijzigen, gebruik dan **Rename** in het menu van de module in de Device Builder. Pas je
+  `name:` aan in de YAML en klik je op Install, dan mislukt de upload met *device is
+  offline*: de Device Builder zoekt de nieuwe naam, maar de module heeft nog de oude.
+  Oplossing: installeer nog een keer en kies het IP-adres van de module als doel (of
+  gebruik `esphome run <bestand> --device <ip-adres>`).
 
 ## 5. De webpagina van de module
 
