@@ -1,113 +1,69 @@
 # ESPHome Room Presence
 
-Turn cheap ESP32 boards into **room nodes** for Home Assistant: one per room, each one
-a **Bluetooth presence scanner** and a **Wi-Fi monitor**. Together they tell you *who is
-in which room* (via the phones, watches or BLE tags people carry) and how good your Wi-Fi
-is everywhere in the house.
+*Nederlands: [README.nl.md](README.nl.md)*
+
+Turn cheap ESP32 boards into **room nodes** for Home Assistant: one per room, each one a
+**Bluetooth presence scanner** and a **Wi-Fi monitor**. Together they tell you *who is in
+which room* (via the phones, watches or tags people carry) and how good your Wi-Fi is
+everywhere in the house.
+
+**[→ Install from your browser](https://schmeitz.github.io/esphome-room-presence/)** ·
+**[Manual](docs/manual.md)** · [Handleiding (NL)](docs/handleiding.md)
+
+## Features
 
 - **Room presence**: every node is an active ESPHome Bluetooth proxy. Home Assistant +
-  [Bermuda BLE Trilateration](https://github.com/agittins/bermuda) compares the signal of
-  each tracked device across all nodes and places it in the area of the closest node.
-- **Wi-Fi monitoring**: signal strength (dBm and %), connected access point (BSSID), channel,
-  disconnect counter, uptime, chip temperature, free memory and reset reason, per room.
-- **Free room choice at install time**: the room is a single setting that becomes the node's
-  Home Assistant area. Nothing is hard-coded, so you can use it in any house.
-- **Plain ESPHome packages**: no custom components, easy to review and extend.
+  [Bermuda BLE Trilateration](https://github.com/agittins/bermuda) place each tracked phone,
+  watch or tag in the area of the closest node.
+- **Wi-Fi monitoring**: signal strength (dBm and %), access point (BSSID), channel, number
+  of drop-outs, uptime, chip temperature and free memory, per room.
+- **Bluetooth monitor**: see how many devices a node hears and the five strongest signals.
+- **Built-in web page** on every node with all sensors and the live log.
+- **Free room choice**: one firmware for every node; you choose the room (Home Assistant
+  area) when you add the node, and can change it at any time.
+- **Two ways to install**: a browser installer for everyone, or plain ESPHome packages for
+  your own Device Builder.
 
-## Hardware
+## Quick start
 
-Any ESP32 with Bluetooth, for example an ESP32-WROOM-32 DevKit (about €5) powered by a
-USB phone charger. Classic ESP32, ESP32-S3 and ESP32-C3 work; the **ESP8266 does not**
-(it has no Bluetooth).
+1. Get an ESP32, ESP32-S3 or ESP32-C3 board (an ESP8266 has no Bluetooth).
+2. Open the [web installer](https://schmeitz.github.io/esphome-room-presence/) in Chrome or
+   Edge, click **Install** and enter your Wi-Fi.
+3. Add the discovered node in Home Assistant and choose its room.
+4. Install Bermuda and make your phones recognisable (Android: BLE transmitter in the
+   Companion app; iPhone: Private BLE Device).
 
-Placement tips: one node per room, about 1–2 m high, away from large metal objects and
-not right next to a wall you share with another room.
+Everything is explained step by step in the [manual](docs/manual.md).
 
-## Installation
+## Your own ESPHome configuration
 
-### 1. Add the packages to ESPHome
-
-**Option A: Windows helper script** (copies the packages, creates the shared secrets and
-asks for the room):
-
-```powershell
-.\tools\Deploy-ToHomeAssistant.ps1 -EsphomeDir \\homeassistant.local\config\esphome
-# or non-interactive:
-.\tools\Deploy-ToHomeAssistant.ps1 -EsphomeDir \\homeassistant.local\config\esphome -RoomName "Living room"
-```
-
-**Option B: manual**
-1. Copy `packages/` to `<esphome config>/packages/room-presence/`.
-2. Add the keys from [`examples/secrets.example.yaml`](examples/secrets.example.yaml) to
-   your ESPHome `secrets.yaml`.
-3. Create one device file per room, see [`examples/room-living-room.yaml`](examples/room-living-room.yaml):
+Prefer to manage the nodes yourself (own Wi-Fi secrets, encryption key, passwords)? Copy
+`packages/` to `<esphome config>/packages/room-presence/` and create one small file per room:
 
 ```yaml
 substitutions:
-  name: room-living-room          # hostname: a-z, 0-9 and '-'
-  friendly_name: Room Living room # device name in Home Assistant
-  room: Living room               # Home Assistant area (created if it does not exist)
+  name: room-living-room
+  friendly_name: Room Living room
+  room: Living room          # Home Assistant area
 
 packages:
   room_node: !include packages/room-presence/room-node.yaml
 ```
 
-**Option C: straight from GitHub**: see [`examples/room-remote-package.yaml`](examples/room-remote-package.yaml).
+See [chapter 3B of the manual](docs/manual.md#b-your-own-esphome-device-builder-advanced)
+and the Windows helper `tools/Deploy-ToHomeAssistant.ps1`.
 
-### 2. Flash the node
+## Repository layout
 
-In the ESPHome Device Builder: open the device, **Install**, then **Plug into this computer**
-for the first flash. Later updates install over Wi-Fi.
-
-### 3. Add it to Home Assistant
-
-Home Assistant discovers the node; confirm it under *Settings → Devices & services → ESPHome*.
-It lands in the area you chose as `room`. To move a node to another room, change its area in
-Home Assistant (or change `room` and re-install).
-
-### 4. Room presence with Bermuda
-
-1. Install **Bermuda BLE Trilateration** (HACS) and add the integration.
-2. Make the people's devices visible over Bluetooth:
-   - **Android**: Home Assistant Companion app → *Settings → Companion app → Manage sensors →
-     BLE Transmitter*, enable it. Bermuda picks up the iBeacon.
-   - **iPhone / Apple Watch**: iOS randomises Bluetooth addresses. Use the core
-     **Private BLE Device** integration with the phone's IRK, then select it in Bermuda.
-   - **BLE tags** (Tile, NutTag, etc.) with a fixed address can be selected directly.
-3. In Bermuda's options, select the devices to track. You get, per device,
-   `sensor.<device>_area` (the room it is in) and a distance per node.
-4. Optional: put the area sensor in a `person` or use it in automations
-   ("turn off the lights when nobody is left in the room").
-
-Tuning: Bermuda options *max radius* and *smoothing* trade speed for stability. Room nodes
-should all run the same firmware, so the signal levels are comparable.
-
-## Entities per node
-
-| Entity | Description |
+| Path | Contents |
 | --- | --- |
-| Wi-Fi signal / Wi-Fi signal quality | RSSI in dBm and as 0–100 % |
-| Access point (BSSID), Wi-Fi channel, Wi-Fi SSID | Which AP the node is connected to |
-| Wi-Fi disconnects | Number of drops since boot |
-| Uptime, Reset reason, Chip temperature, Free heap, Loop time | Device health |
-| Bluetooth scanning (switch) | Pause BLE scanning, for example for diagnosis |
-| Restart, Restart (safe mode) | Maintenance buttons |
-| Status | Online / offline |
-
-## Configuration options (substitutions)
-
-| Substitution | Default | Purpose |
-| --- | --- | --- |
-| `name` | `room-node` | Hostname |
-| `friendly_name` | `Room node` | Device name |
-| `room` | *(empty)* | Home Assistant area |
-| `board` | `esp32dev` | PlatformIO board id (`esp32-s3-devkitc-1`, `esp32-c3-devkitm-1`, ...) |
-| `log_level` | `INFO` | ESPHome log level |
-| `wifi_update_interval` | `30s` | Update interval of the Wi-Fi sensors |
-| `ble_scan_interval` / `ble_scan_window` | `1100ms` | BLE scan timing (continuous by default) |
-
-You can also include the packages separately (`core.yaml`, `wifi-monitor.yaml`,
-`ble-presence.yaml`) if you only want one of the two functions.
+| `packages/` | ESPHome packages (core, credentials, Wi-Fi monitor, Bluetooth presence, web page) |
+| `firmware/` | Configurations of the pre-built firmware per chip (used by the web installer) |
+| `site/` | The web installer page (published on GitHub Pages) |
+| `examples/` | Example device files and secrets |
+| `tools/` | Windows helper to deploy to Home Assistant |
+| `docs/` | Manual (EN/NL) and roadmap |
+| `.github/workflows/` | Builds the firmware and publishes the installer |
 
 ## Privacy
 

@@ -1,0 +1,21 @@
+# Room node for ESP32-S3 - base configuration.
+# This is the file that is imported when you "adopt" a web-installed node in the ESPHome Device Builder.
+substitutions:
+  name: room-node
+  friendly_name: Room node
+  board: esp32-s3-devkitc-1
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  # One firmware for every node: the MAC address makes each hostname unique.
+  name_add_mac_suffix: true
+
+ota:
+  - platform: esphome
+
+packages:
+  core: !include ../packages/core.yaml
+  wifi_monitor: !include ../packages/wifi-monitor.yaml
+  ble_presence: !include ../packages/ble-presence.yaml
+  web_server: !include ../packages/web-server.yaml

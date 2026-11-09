@@ -8,12 +8,40 @@ substitutions:
   # Bermuda recommends (near) continuous scanning for fast, stable room detection.
   ble_scan_interval: 1100ms
   ble_scan_window: 1100ms
+  # Bluetooth monitor: how long a device counts as "in range" after its last advertisement,
+  # and how often the monitor sensors are updated.
+  ble_monitor_window_ms: "60000"
+  ble_monitor_update_interval: 30s
 
 esp32_ble_tracker:
   scan_parameters:
     interval: ${ble_scan_interval}
     window: ${ble_scan_window}
     active: true
+  # Bluetooth monitor: remember what this node hears (address -> RSSI, last seen, name).
+  on_ble_advertise:
+    - then:
+        - lambda: |-
+            auto &seen = id(ble_seen);
+            const uint64_t addr = x.address_uint64();
+            std::string label = x.get_name();
+            if (label.empty()) {
+              auto ib = x.get_ibeacon();
+              if (ib.has_value()) {
+                char buf[32];
+                snprintf(buf, sizeof(buf), "iBeacon %u/%u", (unsigned) ib->get_major(), (unsigned) ib->get_minor());
+                label = buf;
+              }
+            }
+            auto it = seen.find(addr);
+            if (it == seen.end()) {
+              if (seen.size() >= 150) return;  // cap memory use in very busy places
+              seen[addr] = std::make_tuple(x.get_rssi(), millis(), label);
+            } else {
+              std::get<0>(it->second) = x.get_rssi();
+              std::get<1>(it->second) = millis();
+              if (!label.empty()) std::get<2>(it->second) = label;
+            }
 
 bluetooth_proxy:
   # Active: Home Assistant can also connect to BLE devices through this node
@@ -44,3 +72,57 @@ globals:
     type: bool
     restore_value: false
     initial_value: "true"
+  - id: ble_seen
+    type: std::map<uint64_t, std::tuple<int, uint32_t, std::string>>
+    restore_value: false
+
+sensor:
+  - platform: template
+    id: ble_devices_in_range
+    name: Bluetooth devices in range
+    icon: mdi:bluetooth-connect
+    unit_of_measurement: devices
+    accuracy_decimals: 0
+    state_class: measurement
+    update_interval: never
+
+text_sensor:
+  - platform: template
+    id: ble_nearest
+    name: Nearest Bluetooth devices
+    icon: mdi:signal-distance-variant
+    entity_category: diagnostic
+    update_interval: never
+
+interval:
+  - interval: ${ble_monitor_update_interval}
+    then:
+      - lambda: |-
+          auto &seen = id(ble_seen);
+          const uint32_t now = millis();
+          for (auto it = seen.begin(); it != seen.end();) {
+            if (now - std::get<1>(it->second) > ${ble_monitor_window_ms}UL) it = seen.erase(it);
+            else ++it;
+          }
+          id(ble_devices_in_range).publish_state(seen.size());
+          // Five strongest signals, e.g. "iBeacon 100/40004 -52, Buds3 Pro -61, ..."
+          std::vector<std::pair<int, uint64_t>> order;
+          order.reserve(seen.size());
+          for (auto &e : seen) order.emplace_back(std::get<0>(e.second), e.first);
+          std::sort(order.begin(), order.end(), [](const std::pair<int, uint64_t> &a, const std::pair<int, uint64_t> &b) { return a.first > b.first; });
+          std::string out;
+          for (size_t i = 0; i < order.size() && i < 5; i++) {
+            const uint64_t a = order[i].second;
+            std::string label = std::get<2>(seen[a]);
+            if (label.empty()) {
+              char mac[18];
+              snprintf(mac, sizeof(mac), "%02X:%02X:%02X:%02X:%02X:%02X", (unsigned) ((a >> 40) & 0xFF), (unsigned) ((a >> 32) & 0xFF),
+                       (unsigned) ((a >> 24) & 0xFF), (unsigned) ((a >> 16) & 0xFF), (unsigned) ((a >> 8) & 0xFF), (unsigned) (a & 0xFF));
+              label = mac;
+            }
+            if (label.size() > 24) label = label.substr(0, 24);
+            char line[48];
+            snprintf(line, sizeof(line), "%s%s %d", out.empty() ? "" : ", ", label.c_str(), order[i].first);
+            out += line;
+          }
+          id(ble_nearest).publish_state(out.empty() ? "none" : out);

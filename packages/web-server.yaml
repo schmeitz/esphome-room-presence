@@ -1,0 +1,8 @@
+# Built-in web page: open http://<node-ip>/ to see all sensors, the Bluetooth monitor
+# and the live log of the node. credentials.yaml adds a username/password.
+
+web_server:
+  port: 80
+  version: 3
+  # Serve the page from the node itself (works without internet access).
+  local: true

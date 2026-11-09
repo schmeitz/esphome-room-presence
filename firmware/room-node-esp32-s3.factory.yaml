@@ -1,0 +1,25 @@
+# Room node for ESP32-S3 - pre-built firmware for the web installer.
+# Adds Wi-Fi provisioning over USB (Improv), adoption in the Device Builder and
+# firmware updates from GitHub Pages on top of the base configuration.
+packages:
+  base: !include room-node-esp32-s3.yaml
+
+dashboard_import:
+  package_import_url: github://schmeitz/esphome-room-presence/firmware/room-node-esp32-s3.yaml@main
+  import_full_config: false
+
+# Lets the web installer send your Wi-Fi name and password over USB right after flashing.
+improv_serial:
+
+# Firmware updates published on GitHub Pages show up as an update entity in Home Assistant.
+http_request:
+
+ota:
+  - platform: http_request
+    id: ota_http_request
+
+update:
+  - platform: http_request
+    name: Firmware
+    id: update_http_request
+    source: https://schmeitz.github.io/esphome-room-presence/firmware/room-node.manifest.json

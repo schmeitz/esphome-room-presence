@@ -1,20 +1,21 @@
 # Roadmap
 
-## v1.0 (current)
-- [x] ESPHome packages: core, Wi-Fi monitor, Bluetooth presence (active proxy)
+## v1.1 (current)
+- [x] ESPHome packages: core, credentials, Wi-Fi monitor, Bluetooth presence (active proxy), web page
 - [x] Room = free setting, becomes the Home Assistant area
+- [x] Bluetooth monitor sensors (devices in range, nearest devices)
 - [x] Windows helper `tools/Deploy-ToHomeAssistant.ps1` (packages, secrets, device file)
-- [x] First node live (werkkamer, 2026-11-09): flashed, adopted in HA, registered as Bluetooth scanner
-- [ ] Bermuda configured + phones tracked
-- [ ] Tag v1.0.0
+- [x] Pre-built firmware for ESP32 / ESP32-S3 / ESP32-C3 built by GitHub Actions
+- [x] Web installer page (ESP Web Tools, Improv Wi-Fi), EN/NL
+- [x] Manual EN/NL
+- [x] First node live (werkkamer, 2026-11-09), Bermuda tracking one phone
+- [ ] Repository public + GitHub Pages enabled (needed for the web installer and adoption)
+- [ ] Tag v1.1.0
 
 ## Next
-- [ ] **Web installer**: GitHub Action builds a generic firmware, GitHub Pages hosts an
-      ESP Web Tools page (flash from the browser, Wi-Fi via Improv), room chosen in the
-      Home Assistant "new device" dialog. Requires a public repository.
-- [ ] `dashboard_import` so web-installed nodes can be adopted in the Device Builder
 - [ ] Example Home Assistant dashboard: who is where + Wi-Fi heat map per room
 - [ ] Example automations / blueprint (lights off when a room is empty, ...)
-- [ ] Optional on-device presence per person (`ble_rssi` with IRK) as an alternative to Bermuda
+- [ ] Optional IRK capture mode to make adding iPhones easier
 - [ ] Optional mmWave radar (LD2410/LD2450) package for presence of people without a phone
-- [ ] Board presets for ESP32-S3 / ESP32-C3 and common enclosures
+- [ ] Optional on-device presence per person (`ble_rssi` with IRK) as an alternative to Bermuda
+- [ ] Board presets and enclosures

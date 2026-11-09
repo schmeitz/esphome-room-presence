@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room Presence Installer</title>
+<meta name="description" content="Install the ESPHome Room Presence firmware on an ESP32 straight from your browser: Bluetooth room presence and Wi-Fi monitoring for Home Assistant.">
+<script type="module" src="https://unpkg.com/esp-web-tools@10.4.0/dist/web/install-button.js?module"></script>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --text: #1d232b; --muted: #5b6672; --border: #dde2e8;
+    --accent: #0a84c6; --accent-text: #ffffff; --soft: #e8f3fa; --warn-bg: #fff6e0; --warn-text: #6b4b00;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11151a; --surface: #1a2027; --text: #e6eaef; --muted: #9aa5b1; --border: #2c343e;
+      --accent: #3eaee8; --accent-text: #0b1117; --soft: #16303f; --warn-bg: #3a2f12; --warn-text: #f3d48a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11151a; --surface: #1a2027; --text: #e6eaef; --muted: #9aa5b1; --border: #2c343e;
+    --accent: #3eaee8; --accent-text: #0b1117; --soft: #16303f; --warn-bg: #3a2f12; --warn-text: #f3d48a;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  h1 { font-size: 1.7rem; margin: 0; line-height: 1.2; }
+  .tagline { color: var(--muted); margin: 6px 0 0; }
+  .lang { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+  .lang button { border: 0; background: transparent; color: var(--text); padding: 6px 14px; font: inherit; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-top: 18px; }
+  .step { display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: grid; place-items: center; font-weight: 700; }
+  h2 { font-size: 1.15rem; margin: 2px 0 8px; }
+  p, li { margin: 0 0 8px; }
+  ul { padding-left: 20px; margin: 0; }
+  a { color: var(--accent); }
+  code { background: var(--soft); padding: 1px 6px; border-radius: 6px; font-size: .92em; }
+  .install { margin: 14px 0 6px; }
+  esp-web-install-button button[slot="activate"] {
+    background: var(--accent); color: var(--accent-text); border: 0; border-radius: 10px;
+    padding: 12px 22px; font: 600 1rem system-ui, sans-serif; cursor: pointer;
+  }
+  .note { background: var(--warn-bg); color: var(--warn-text); border-radius: 10px; padding: 10px 14px; font-size: .95rem; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 18px; }
+  .feature { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .feature strong { display: block; margin-bottom: 4px; }
+  footer { color: var(--muted); font-size: .9rem; margin-top: 28px; }
+  [data-lang] { display: none; }
+  html[lang="en"] [data-lang="en"], html[lang="nl"] [data-lang="nl"] { display: revert; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>ESPHome Room Presence</h1>
+      <p class="tagline" data-lang="en">Know who is in which room, and how good your Wi-Fi is everywhere.</p>
+      <p class="tagline" data-lang="nl">Weet wie in welke ruimte is, en hoe goed je wifi overal is.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language / Taal">
+      <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-set-lang="nl" aria-pressed="false">NL</button>
+    </div>
+  </header>
+
+  <div class="features">
+    <div class="feature">
+      <strong data-lang="en">Room presence</strong><strong data-lang="nl">Aanwezigheid per ruimte</strong>
+      <span data-lang="en">Each node hears the phones, watches and tags in its room. Home Assistant + Bermuda work out who is where.</span>
+      <span data-lang="nl">Elke module hoort de telefoons, horloges en tags in zijn ruimte. Home Assistant + Bermuda bepalen wie waar is.</span>
+    </div>
+    <div class="feature">
+      <strong data-lang="en">Wi-Fi monitor</strong><strong data-lang="nl">Wifi-monitor</strong>
+      <span data-lang="en">Signal strength, access point, channel and drop-outs, per room.</span>
+      <span data-lang="nl">Signaalsterkte, access point, kanaal en onderbrekingen, per ruimte.</span>
+    </div>
+    <div class="feature">
+      <strong data-lang="en">Your room, your choice</strong><strong data-lang="nl">Zelf de ruimte kiezen</strong>
+      <span data-lang="en">One firmware for every node. You pick the room when you add it to Home Assistant.</span>
+      <span data-lang="nl">Eén firmware voor elke module. Je kiest de ruimte bij het toevoegen aan Home Assistant.</span>
+    </div>
+  </div>
+
+  <section class="card step">
+    <div class="num">1</div>
+    <div>
+      <h2 data-lang="en">What you need</h2><h2 data-lang="nl">Wat heb je nodig</h2>
+      <ul data-lang="en">
+        <li>An ESP32, ESP32-S3 or ESP32-C3 board (for example an ESP32-WROOM-32 DevKit). <strong>ESP8266 boards do not work</strong>: they have no Bluetooth.</li>
+        <li>A USB cable that carries data (not a charge-only cable).</li>
+        <li>Google Chrome or Microsoft Edge on a computer (Web Serial is not available on phones, Safari or Firefox).</li>
+        <li>Home Assistant on the same network, and the name and password of your 2.4 GHz Wi-Fi.</li>
+      </ul>
+      <ul data-lang="nl">
+        <li>Een ESP32-, ESP32-S3- of ESP32-C3-bordje (bijvoorbeeld een ESP32-WROOM-32 DevKit). <strong>ESP8266-bordjes werken niet</strong>: die hebben geen Bluetooth.</li>
+        <li>Een USB-kabel die data doorgeeft (geen kabel die alleen oplaadt).</li>
+        <li>Google Chrome of Microsoft Edge op een computer (Web Serial werkt niet op telefoons, Safari of Firefox).</li>
+        <li>Home Assistant op hetzelfde netwerk, en de naam en het wachtwoord van je 2,4 GHz-wifi.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card step">
+    <div class="num">2</div>
+    <div>
+      <h2 data-lang="en">Install the firmware</h2><h2 data-lang="nl">Firmware installeren</h2>
+      <p data-lang="en">Plug the board into your computer, click the button and choose its serial port. The right firmware for your chip is selected automatically. After flashing, enter your Wi-Fi name and password.</p>
+      <p data-lang="nl">Steek het bordje in je computer, klik op de knop en kies de seriële poort. De juiste firmware voor je chip wordt automatisch gekozen. Vul na het flashen de naam en het wachtwoord van je wifi in.</p>
+      <div class="install">
+        <esp-web-install-button manifest="firmware/room-node.manifest.json">
+          <button slot="activate"><span data-lang="en">Install on ESP32</span><span data-lang="nl">Installeren op ESP32</span></button>
+          <span slot="unsupported" class="note" data-lang="en">Your browser does not support Web Serial. Use Chrome or Edge on a computer.</span>
+          <span slot="unsupported" class="note" data-lang="nl">Je browser ondersteunt geen Web Serial. Gebruik Chrome of Edge op een computer.</span>
+          <span slot="not-allowed" class="note" data-lang="en">This page must be opened over https.</span>
+          <span slot="not-allowed" class="note" data-lang="nl">Deze pagina moet via https geopend worden.</span>
+        </esp-web-install-button>
+      </div>
+      <p data-lang="en">No serial port shown? Install the USB driver of your board (CH340 or CP210x) and use a data cable. Still stuck? Hold the <code>BOOT</code> button while you click Connect.</p>
+      <p data-lang="nl">Geen seriële poort te zien? Installeer het USB-stuurprogramma van je bordje (CH340 of CP210x) en gebruik een datakabel. Lukt het nog niet? Houd de <code>BOOT</code>-knop ingedrukt terwijl je op Verbinden klikt.</p>
+    </div>
+  </section>
+
+  <section class="card step">
+    <div class="num">3</div>
+    <div>
+      <h2 data-lang="en">Add it to Home Assistant and choose the room</h2><h2 data-lang="nl">Toevoegen aan Home Assistant en de ruimte kiezen</h2>
+      <ol data-lang="en">
+        <li>Home Assistant shows <em>New devices discovered</em>. Go to <em>Settings → Devices &amp; services</em> and click <strong>Add</strong> next to <em>Room node …</em>.</li>
+        <li>In the last step, pick the <strong>area</strong> (the room) where the node will be placed. You can type a new one.</li>
+        <li>Put the node in that room: about 1–2 m high, on a USB charger, away from large metal objects.</li>
+      </ol>
+      <ol data-lang="nl">
+        <li>Home Assistant meldt <em>Nieuwe apparaten ontdekt</em>. Ga naar <em>Instellingen → Apparaten &amp; diensten</em> en klik op <strong>Toevoegen</strong> bij <em>Room node …</em>.</li>
+        <li>Kies in de laatste stap het <strong>gebied</strong> (de ruimte) waar de module komt. Je kunt ook een nieuwe typen.</li>
+        <li>Zet de module in die ruimte: op ongeveer 1–2 m hoogte, aan een USB-lader, uit de buurt van grote metalen voorwerpen.</li>
+      </ol>
+      <p data-lang="en">Moving a node later? Just change its area in Home Assistant (device page → pencil icon).</p>
+      <p data-lang="nl">Module later verplaatsen? Wijzig gewoon het gebied in Home Assistant (apparaatpagina → potloodicoon).</p>
+    </div>
+  </section>
+
+  <section class="card step">
+    <div class="num">4</div>
+    <div>
+      <h2 data-lang="en">Track people with Bermuda</h2><h2 data-lang="nl">Personen volgen met Bermuda</h2>
+      <ul data-lang="en">
+        <li>Install <a href="https://github.com/agittins/bermuda">Bermuda BLE Trilateration</a> from HACS and add the integration.</li>
+        <li><strong>Android / Wear OS</strong>: Companion app → Manage sensors → <em>BLE Transmitter</em>: on, power <em>High</em>, mode <em>Low latency</em>.</li>
+        <li><strong>iPhone</strong>: add it with the <em>Private BLE Device</em> integration (needs the phone's IRK).</li>
+        <li>Select the devices in Bermuda's options. You get a <code>sensor.&lt;device&gt;_area</code> per device.</li>
+      </ul>
+      <ul data-lang="nl">
+        <li>Installeer <a href="https://github.com/agittins/bermuda">Bermuda BLE Trilateration</a> via HACS en voeg de integratie toe.</li>
+        <li><strong>Android / Wear OS</strong>: Companion-app → Sensoren beheren → <em>BLE-zender</em>: aan, vermogen <em>Hoog</em>, modus <em>Lage latentie</em>.</li>
+        <li><strong>iPhone</strong>: toevoegen met de integratie <em>Private BLE Device</em> (vraagt de IRK van de telefoon).</li>
+        <li>Selecteer de apparaten in de opties van Bermuda. Je krijgt per apparaat een <code>sensor.&lt;apparaat&gt;_area</code>.</li>
+      </ul>
+      <p data-lang="en">Step-by-step instructions, the node's web page and troubleshooting: <a href="https://github.com/schmeitz/esphome-room-presence/blob/main/docs/manual.md">full manual</a>.</p>
+      <p data-lang="nl">Stap-voor-stap uitleg, de webpagina van de module en problemen oplossen: <a href="https://github.com/schmeitz/esphome-room-presence/blob/main/docs/handleiding.md">volledige handleiding</a>.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p data-lang="en">Open source (MIT) · <a href="https://github.com/schmeitz/esphome-room-presence">Source code on GitHub</a> · Built with <a href="https://esphome.io">ESPHome</a> and <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>. All data stays in your own network.</p>
+    <p data-lang="nl">Open source (MIT) · <a href="https://github.com/schmeitz/esphome-room-presence">Broncode op GitHub</a> · Gemaakt met <a href="https://esphome.io">ESPHome</a> en <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>. Alle gegevens blijven in je eigen netwerk.</p>
+  </footer>
+</div>
+<script>
+  (function () {
+    var KEY = "room-presence-lang";
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-set-lang") === lang));
+      });
+      try { localStorage.setItem(KEY, lang); } catch (e) {}
+    }
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    var preferred = saved || ((navigator.language || "en").toLowerCase().indexOf("nl") === 0 ? "nl" : "en");
+    setLang(preferred);
+    document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+      b.addEventListener("click", function () { setLang(b.getAttribute("data-set-lang")); });
+    });
+  })();
+</script>
+</body>
+</html>

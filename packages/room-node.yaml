@@ -1,6 +1,32 @@
-# All-in-one room node: core + Wi-Fi monitor + Bluetooth presence.
+# All-in-one room node for your own ESPHome Device Builder:
+# core + your credentials + Wi-Fi monitor + Bluetooth presence + web page + room.
 # Include this single file from your device configuration (see examples/).
+# Want a leaner node? Include the individual packages instead (leave out web-server.yaml).
+
+substitutions:
+  room: Room
+
+esphome:
+  # The room becomes the Home Assistant area of the node (created if it does not exist).
+  area: ${room}
+  on_boot:
+    priority: -100
+    then:
+      - text_sensor.template.publish:
+          id: room_name
+          state: "${room}"
+
+text_sensor:
+  - platform: template
+    id: room_name
+    name: Room
+    icon: mdi:home-map-marker
+    entity_category: diagnostic
+    update_interval: never
+
 packages:
   core: !include core.yaml
+  credentials: !include credentials.yaml
   wifi_monitor: !include wifi-monitor.yaml
   ble_presence: !include ble-presence.yaml
+  web_server: !include web-server.yaml

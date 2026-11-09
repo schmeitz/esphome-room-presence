@@ -59,6 +59,7 @@ $wanted = [ordered]@{
   room_node_api_key      = { New-RandomString 32 }
   room_node_ota_password = { (New-RandomString 24) -replace '[+/=]', '' }
   room_node_ap_password  = { (New-RandomString 12) -replace '[+/=]', '' }
+  room_node_web_password = { (New-RandomString 12) -replace '[+/=]', '' }
 }
 foreach ($k in $wanted.Keys) {
   if ($secrets -notmatch "(?m)^$k\s*:") { $add += "${k}: `"$(& $wanted[$k])`"" ; Write-Host "secret   + $k (generated)" }
