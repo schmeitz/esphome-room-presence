@@ -11,7 +11,7 @@
 - [x] First node live (werkkamer, 2026-11-09), Bermuda tracking one phone
 - [x] Repository public + GitHub Pages: https://schmeitz.github.io/esphome-room-presence/
 - [x] Database-friendly sensors (averaging, delta filters, restart timestamp)
-- [ ] Test the web installer with a fresh board
+- [x] Test the web installer with a fresh board (second node, 2026-11-09)
 - [ ] Tag v1.2.0
 
 ## Next
