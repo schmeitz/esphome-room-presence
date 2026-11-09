@@ -1,6 +1,6 @@
 # Roadmap
 
-## v1.1 (current)
+## v1.2 (current)
 - [x] ESPHome packages: core, credentials, Wi-Fi monitor, Bluetooth presence (active proxy), web page
 - [x] Room = free setting, becomes the Home Assistant area
 - [x] Bluetooth monitor sensors (devices in range, nearest devices)
@@ -9,8 +9,10 @@
 - [x] Web installer page (ESP Web Tools, Improv Wi-Fi), EN/NL
 - [x] Manual EN/NL
 - [x] First node live (werkkamer, 2026-11-09), Bermuda tracking one phone
-- [ ] Repository public + GitHub Pages enabled (needed for the web installer and adoption)
-- [ ] Tag v1.1.0
+- [x] Repository public + GitHub Pages: https://schmeitz.github.io/esphome-room-presence/
+- [x] Database-friendly sensors (averaging, delta filters, restart timestamp)
+- [ ] Test the web installer with a fresh board
+- [ ] Tag v1.2.0
 
 ## Next
 - [ ] Example Home Assistant dashboard: who is where + Wi-Fi heat map per room
