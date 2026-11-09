@@ -5,6 +5,10 @@
 substitutions:
   wifi_update_interval: 30s
 
+esphome:
+  includes:
+    - <esp_wifi.h>   # for the Wi-Fi channel sensor
+
 debug:
   update_interval: 60s
 

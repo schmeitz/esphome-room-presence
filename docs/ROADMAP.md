@@ -4,7 +4,8 @@
 - [x] ESPHome packages: core, Wi-Fi monitor, Bluetooth presence (active proxy)
 - [x] Room = free setting, becomes the Home Assistant area
 - [x] Windows helper `tools/Deploy-ToHomeAssistant.ps1` (packages, secrets, device file)
-- [ ] First node live (werkkamer) and Bermuda configured
+- [x] First node live (werkkamer, 2026-11-09): flashed, adopted in HA, registered as Bluetooth scanner
+- [ ] Bermuda configured + phones tracked
 - [ ] Tag v1.0.0
 
 ## Next
