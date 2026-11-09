@@ -228,12 +228,14 @@ heating in the office when a specific phone is there, show "who is where" on a d
 | Wi-Fi signal / Wi-Fi signal quality | RSSI in dBm and as 0–100 % |
 | Access point (BSSID), Wi-Fi channel, Wi-Fi SSID, IP address, MAC address | Connection details |
 | Wi-Fi disconnects | Number of drops since boot |
-| Bluetooth devices in range, Nearest Bluetooth devices | What the node hears |
+| Bluetooth devices in range, Nearest Bluetooth devices* | What the node hears |
 | Bluetooth scanning (switch) | Pause BLE scanning |
 | Room (option B) | The configured room |
-| Uptime, Reset reason, Chip temperature, Free heap, Loop time | Device health |
+| Last restart, Reset reason, Chip temperature, Free heap*, Loop time* | Device health |
 | Restart, Restart (safe mode) | Maintenance buttons |
 | Firmware (option A) | Firmware update |
+
+\* Disabled by default in Home Assistant to keep the database small (they change all the time). They are always visible on the node's web page; enable them on the device page in Home Assistant if you want history.
 
 **Substitutions (option B)**
 
@@ -245,6 +247,7 @@ heating in the office when a specific phone is there, show "who is where" on a d
 | `board` | `esp32dev` | Board id (`esp32-s3-devkitc-1`, `esp32-c3-devkitm-1`, …) |
 | `log_level` | `INFO` | Log level |
 | `wifi_update_interval` | `30s` | Update interval of the Wi-Fi sensors |
+| `wifi_signal_delta` | `2` | Minimum change (dB) before the Wi-Fi signal is sent |
 | `ble_scan_interval` / `ble_scan_window` | `1100ms` | BLE scan timing (continuous) |
 | `ble_monitor_window_ms` | `60000` | How long a device counts as "in range" |
 | `ble_monitor_update_interval` | `30s` | Update interval of the Bluetooth monitor |

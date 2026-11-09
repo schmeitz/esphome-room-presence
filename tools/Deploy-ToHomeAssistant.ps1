@@ -21,7 +21,7 @@
   Works in Windows PowerShell 5.1. Writes YAML as UTF-8 without BOM with LF line endings.
 #>
 param(
-  [string]$EsphomeDir = "\\192.168.2.25\config\esphome",
+  [string]$EsphomeDir = "\\homeassistant.local\config\esphome",
   [string]$RoomName,
   [string]$RoomId,
   [string]$FriendlyName,

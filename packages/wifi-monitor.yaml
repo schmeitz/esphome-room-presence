@@ -4,6 +4,8 @@
 
 substitutions:
   wifi_update_interval: 30s
+  # Minimum change (dB) of the averaged Wi-Fi signal before a new value is sent.
+  wifi_signal_delta: "2"
 
 esphome:
   includes:
@@ -23,11 +25,19 @@ wifi:
     - lambda: id(wifi_disconnects) += 1;
 
 sensor:
+  # Database-friendly: values are averaged and only sent to Home Assistant when they really
+  # change. The web page of the node shows every sensor, including the ones that are
+  # disabled by default in Home Assistant.
   - platform: wifi_signal
     id: wifi_rssi
     name: Wi-Fi signal
     update_interval: ${wifi_update_interval}
     entity_category: diagnostic
+    filters:
+      - sliding_window_moving_average:
+          window_size: 6
+          send_every: 2
+      - delta: ${wifi_signal_delta}
 
   - platform: copy
     source_id: wifi_rssi
@@ -62,21 +72,27 @@ sensor:
     entity_category: diagnostic
     lambda: return (float) id(wifi_disconnects);
 
+  # Timestamp of the last restart: changes only when the node reboots.
   - platform: uptime
-    name: Uptime
+    type: timestamp
+    name: Last restart
     entity_category: diagnostic
 
   - platform: internal_temperature
     name: Chip temperature
     entity_category: diagnostic
+    filters:
+      - delta: 1.0
 
   - platform: debug
     free:
       name: Free heap
       entity_category: diagnostic
+      disabled_by_default: true
     loop_time:
       name: Loop time
       entity_category: diagnostic
+      disabled_by_default: true
 
 text_sensor:
   - platform: wifi_info

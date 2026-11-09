@@ -85,6 +85,8 @@ sensor:
     accuracy_decimals: 0
     state_class: measurement
     update_interval: never
+    filters:
+      - delta: 2
 
 text_sensor:
   - platform: template
@@ -92,6 +94,8 @@ text_sensor:
     name: Nearest Bluetooth devices
     icon: mdi:signal-distance-variant
     entity_category: diagnostic
+    # Changes every update: shown on the node's web page, disabled in Home Assistant by default.
+    disabled_by_default: true
     update_interval: never
 
 interval:

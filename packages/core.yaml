@@ -14,7 +14,7 @@ esphome:
   min_version: 2025.6.0
   project:
     name: schmeitz.esphome-room-presence
-    version: "1.1.0"
+    version: "1.2.0"
 
 esp32:
   board: ${board}
@@ -31,6 +31,11 @@ api:
 # pre-built firmware in firmware/ (without password, for adoption).
 
 safe_mode:
+
+# Clock synchronised with Home Assistant (used by the "Last restart" timestamp).
+time:
+  - platform: homeassistant
+    id: homeassistant_time
 
 wifi:
   # Do NOT set power_save_mode: none here. With Bluetooth active the ESP32 needs

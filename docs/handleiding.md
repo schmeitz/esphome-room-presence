@@ -232,12 +232,14 @@ entities-kaart met alle `sensor.*_area`-sensoren).
 | Wi-Fi signal / Wi-Fi signal quality | RSSI in dBm en als 0–100 % |
 | Access point (BSSID), Wi-Fi channel, Wi-Fi SSID, IP address, MAC address | Verbindingsgegevens |
 | Wi-Fi disconnects | Aantal onderbrekingen sinds opstarten |
-| Bluetooth devices in range, Nearest Bluetooth devices | Wat de module hoort |
+| Bluetooth devices in range, Nearest Bluetooth devices* | Wat de module hoort |
 | Bluetooth scanning (schakelaar) | BLE-scannen pauzeren |
 | Room (optie B) | De ingestelde ruimte |
-| Uptime, Reset reason, Chip temperature, Free heap, Loop time | Gezondheid van de module |
+| Last restart, Reset reason, Chip temperature, Free heap*, Loop time* | Gezondheid van de module |
 | Restart, Restart (safe mode) | Onderhoudsknoppen |
 | Firmware (optie A) | Firmware-update |
+
+\* Standaard uitgeschakeld in Home Assistant om de database klein te houden (ze veranderen voortdurend). Ze staan altijd op de webpagina van de module; zet ze aan op de apparaatpagina in Home Assistant als je historie wilt.
 
 **Substitutions (optie B)**
 
@@ -249,6 +251,7 @@ entities-kaart met alle `sensor.*_area`-sensoren).
 | `board` | `esp32dev` | Board-id (`esp32-s3-devkitc-1`, `esp32-c3-devkitm-1`, …) |
 | `log_level` | `INFO` | Logniveau |
 | `wifi_update_interval` | `30s` | Interval van de wifi-sensoren |
+| `wifi_signal_delta` | `2` | Minimale verandering (dB) voordat het wifi-signaal wordt doorgestuurd |
 | `ble_scan_interval` / `ble_scan_window` | `1100ms` | BLE-scantiming (continu) |
 | `ble_monitor_window_ms` | `60000` | Hoe lang een apparaat als "in bereik" telt |
 | `ble_monitor_update_interval` | `30s` | Interval van de Bluetooth-monitor |
