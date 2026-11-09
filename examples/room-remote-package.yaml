@@ -1,0 +1,13 @@
+# Example device configuration that pulls the packages straight from GitHub.
+# Works once the repository is public. Pin "ref" to a release tag for reproducible builds.
+substitutions:
+  name: room-kitchen
+  friendly_name: Room Kitchen
+  room: Kitchen
+
+packages:
+  room_node:
+    url: https://github.com/schmeitz/esphome-room-presence
+    ref: main
+    files: [packages/room-node.yaml]
+    refresh: 1d

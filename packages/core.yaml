@@ -1,0 +1,55 @@
+# Core: board, network, Home Assistant API, OTA and maintenance buttons.
+# Secrets expected in your ESPHome secrets.yaml:
+#   wifi_ssid, wifi_password, room_node_api_key, room_node_ota_password, room_node_ap_password
+
+substitutions:
+  name: room-node
+  friendly_name: Room node
+  room: ""
+  board: esp32dev
+  log_level: INFO
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  area: ${room}
+  min_version: 2025.6.0
+  project:
+    name: schmeitz.esphome-room-presence
+    version: "1.0.0"
+
+esp32:
+  board: ${board}
+  framework:
+    # ESP-IDF is the recommended framework for Bluetooth proxies (less RAM, better BLE/Wi-Fi coexistence).
+    type: esp-idf
+
+logger:
+  level: ${log_level}
+
+api:
+  encryption:
+    key: !secret room_node_api_key
+
+ota:
+  - platform: esphome
+    password: !secret room_node_ota_password
+
+safe_mode:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # Do NOT set power_save_mode: none here. With Bluetooth active the ESP32 needs
+  # modem sleep for Wi-Fi/BLE coexistence; ESPHome picks the right default.
+  ap:
+    ssid: ${name}
+    password: !secret room_node_ap_password
+
+captive_portal:
+
+button:
+  - platform: restart
+    name: Restart
+  - platform: safe_mode
+    name: Restart (safe mode)

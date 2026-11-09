@@ -1,0 +1,6 @@
+# All-in-one room node: core + Wi-Fi monitor + Bluetooth presence.
+# Include this single file from your device configuration (see examples/).
+packages:
+  core: !include core.yaml
+  wifi_monitor: !include wifi-monitor.yaml
+  ble_presence: !include ble-presence.yaml

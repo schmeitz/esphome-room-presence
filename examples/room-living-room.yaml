@@ -1,0 +1,10 @@
+# Example device configuration using a LOCAL copy of the packages.
+# Copy the packages/ folder to <esphome config dir>/packages/room-presence/
+# (tools/Deploy-ToHomeAssistant.ps1 does this for you) and put this file next to it.
+substitutions:
+  name: room-living-room
+  friendly_name: Room Living room
+  room: Living room
+
+packages:
+  room_node: !include packages/room-presence/room-node.yaml

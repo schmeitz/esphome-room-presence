@@ -1,0 +1,46 @@
+# Bluetooth presence: turns the node into an (active) Bluetooth proxy that forwards
+# every BLE advertisement it hears to Home Assistant, with RSSI.
+# Room-level presence is then calculated in Home Assistant by Bermuda BLE Trilateration
+# (https://github.com/agittins/bermuda), which compares the signal of each phone/watch/tag
+# across all room nodes and puts it in the area of the strongest node.
+
+substitutions:
+  # Bermuda recommends (near) continuous scanning for fast, stable room detection.
+  ble_scan_interval: 1100ms
+  ble_scan_window: 1100ms
+
+esp32_ble_tracker:
+  scan_parameters:
+    interval: ${ble_scan_interval}
+    window: ${ble_scan_window}
+    active: true
+
+bluetooth_proxy:
+  # Active: Home Assistant can also connect to BLE devices through this node
+  # (e.g. thermometers, locks), not only listen.
+  active: true
+
+switch:
+  - platform: template
+    name: Bluetooth scanning
+    icon: mdi:bluetooth-audio
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    lambda: return id(ble_scanning_enabled);
+    turn_on_action:
+      - globals.set:
+          id: ble_scanning_enabled
+          value: "true"
+      - esp32_ble_tracker.start_scan:
+          continuous: true
+    turn_off_action:
+      - globals.set:
+          id: ble_scanning_enabled
+          value: "false"
+      - esp32_ble_tracker.stop_scan:
+
+globals:
+  - id: ble_scanning_enabled
+    type: bool
+    restore_value: false
+    initial_value: "true"

@@ -1,0 +1,5 @@
+# ESPHome build output and secrets
+.esphome/
+secrets.yaml
+*.bin
+dist/

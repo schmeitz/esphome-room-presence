@@ -1,0 +1,100 @@
+# Wi-Fi monitoring: signal strength/quality, access point (BSSID) and channel,
+# disconnect counter and basic device health. Gives you a per-room Wi-Fi coverage map
+# and shows when a node roams between access points or keeps dropping out.
+
+substitutions:
+  wifi_update_interval: 30s
+
+debug:
+  update_interval: 60s
+
+globals:
+  - id: wifi_disconnects
+    type: int
+    restore_value: false
+    initial_value: "0"
+
+wifi:
+  on_disconnect:
+    - lambda: id(wifi_disconnects) += 1;
+
+sensor:
+  - platform: wifi_signal
+    id: wifi_rssi
+    name: Wi-Fi signal
+    update_interval: ${wifi_update_interval}
+    entity_category: diagnostic
+
+  - platform: copy
+    source_id: wifi_rssi
+    name: Wi-Fi signal quality
+    unit_of_measurement: "%"
+    icon: mdi:wifi
+    accuracy_decimals: 0
+    device_class: ""
+    state_class: measurement
+    entity_category: diagnostic
+    filters:
+      # -100 dBm = 0 %, -50 dBm = 100 %
+      - lambda: return std::min(std::max(2.0f * (x + 100.0f), 0.0f), 100.0f);
+
+  - platform: template
+    name: Wi-Fi channel
+    icon: mdi:access-point
+    accuracy_decimals: 0
+    update_interval: ${wifi_update_interval}
+    entity_category: diagnostic
+    lambda: |-
+      wifi_ap_record_t ap;
+      if (esp_wifi_sta_get_ap_info(&ap) == ESP_OK) return (float) ap.primary;
+      return NAN;
+
+  - platform: template
+    name: Wi-Fi disconnects
+    icon: mdi:wifi-off
+    accuracy_decimals: 0
+    state_class: total_increasing
+    update_interval: 60s
+    entity_category: diagnostic
+    lambda: return (float) id(wifi_disconnects);
+
+  - platform: uptime
+    name: Uptime
+    entity_category: diagnostic
+
+  - platform: internal_temperature
+    name: Chip temperature
+    entity_category: diagnostic
+
+  - platform: debug
+    free:
+      name: Free heap
+      entity_category: diagnostic
+    loop_time:
+      name: Loop time
+      entity_category: diagnostic
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP address
+      entity_category: diagnostic
+    ssid:
+      name: Wi-Fi SSID
+      entity_category: diagnostic
+    bssid:
+      name: Access point (BSSID)
+      icon: mdi:access-point-network
+      entity_category: diagnostic
+    mac_address:
+      name: MAC address
+      entity_category: diagnostic
+
+  - platform: debug
+    reset_reason:
+      name: Reset reason
+      entity_category: diagnostic
+
+binary_sensor:
+  - platform: status
+    name: Status
